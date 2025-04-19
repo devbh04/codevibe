@@ -30,12 +30,12 @@ const Footer: React.FC = () => {
             <h3 className="text-xl font-semibold mb-3 flex justify-center">Socials</h3>
             <div className='flex gap-4'>
               <ul className="space-y-2 text-gray-400 text-lg">
-                <li><a href="#" className="hover:text-red-200">Twitter</a></li>
-                <li><a href="https://discord.gg/KjsqfMwJKR" className="hover:text-red-200">Discord</a></li>
+                <li><a className="hover:text-red-200">Twitter</a></li>
+                <li><a className="hover:text-red-200">Discord</a></li>
               </ul>
               <ul className="space-y-2 text-gray-400 text-lg">
-                <li><a href="https://www.instagram.com/cybercell_viit/" className="hover:text-red-200">Instagram</a></li>
-                <li><a href="https://in.linkedin.com/company/cybercell-viit" className="hover:text-red-200">LinkedIn</a></li>
+                <li><a className="hover:text-red-200">Instagram</a></li>
+                <li><a className="hover:text-red-200">LinkedIn</a></li>
               </ul>
             </div>
           </div>
