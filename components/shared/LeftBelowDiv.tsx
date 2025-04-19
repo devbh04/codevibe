@@ -42,10 +42,11 @@ const LeftBelowDiv = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://localhost:5001/api/v1/gemini/recommend', {
+            const response = await fetch('https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/gemini/recommend', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json', 
+                    'ngrok-skip-browser-warning': 'true'
                 },
                 body: JSON.stringify({
                     userUnderstanding,

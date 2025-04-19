@@ -37,7 +37,11 @@ const MiddleTopDiv = () => {
   useEffect(() => {
     const fetchContestData = async () => {
       try {
-        const response = await fetch(`http://localhost:5001/api/v1/contests/${id}`);
+        const response = await fetch(`https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/contests/${id}`, {
+          headers: {
+            'ngrok-skip-browser-warning': 'true'
+          }
+        });
         if (!response.ok) {
           throw new Error('Failed to fetch contest data');
         }
@@ -57,10 +61,11 @@ const MiddleTopDiv = () => {
   }, [id, setTestCases]);
   
   const handleSubmit = async () => {
-    const response = await fetch('http://localhost:5001/api/v1/gemini/evaluate', {
+    const response = await fetch('https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/gemini/evaluate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({
         userCode,

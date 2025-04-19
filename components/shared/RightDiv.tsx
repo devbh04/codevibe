@@ -52,10 +52,11 @@ const RightDiv = () => {
             setChatArray(prev => [...prev, userMessage]);
             setUserText('');
             
-            const response = await fetch('http://localhost:5001/api/v1/gemini/chat', {
+            const response = await fetch('https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/gemini/chat', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true',
               },
               body: JSON.stringify({
                 userText,

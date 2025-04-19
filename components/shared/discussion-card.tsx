@@ -29,7 +29,11 @@ const DiscussionCard = ({ _id, name, title, desc, date }: {
     setError(null);
     try {
       console.log(`Fetching comments for post ${_id}`);
-      const response = await fetch(`http://localhost:5001/api/v1/discussion/${_id}/comments`);
+      const response = await fetch(`https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/discussion/${_id}/comments`, {
+        headers: {
+          'ngrok-skip-browser-warning': 'true'
+        }
+      });
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -55,10 +59,11 @@ const DiscussionCard = ({ _id, name, title, desc, date }: {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`http://localhost:5001/api/v1/discussion/${_id}/comments`, {
+      const response = await fetch(`https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/discussion/${_id}/comments`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json', 
+          'ngrok-skip-browser-warning': 'true'
         },
         body: JSON.stringify({ 
           name: commenterName, 
