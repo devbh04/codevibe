@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from '@/components/ui/textarea';
+import { BASE_URL } from '@/lib/url';
 
 interface Comment {
   _id: string;
@@ -29,7 +30,7 @@ const DiscussionCard = ({ _id, name, title, desc, date }: {
     setError(null);
     try {
       console.log(`Fetching comments for post ${_id}`);
-      const response = await fetch(`https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/discussion/${_id}/comments`, {
+      const response = await fetch(`${BASE_URL}/api/v1/discussion/${_id}/comments`, {
         headers: {
           'ngrok-skip-browser-warning': 'true'
         }
@@ -59,7 +60,7 @@ const DiscussionCard = ({ _id, name, title, desc, date }: {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(`https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/discussion/${_id}/comments`, {
+      const response = await fetch(`${BASE_URL}/api/v1/discussion/${_id}/comments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', 

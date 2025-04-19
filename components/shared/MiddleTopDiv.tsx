@@ -22,6 +22,7 @@ import useTestCasesStore from '@/store/testCasesStore';
 import { Input } from '../ui/input';
 import { useParams } from 'next/navigation';
 import confetti from 'canvas-confetti';
+import { BASE_URL } from '@/lib/url';
 
 const MiddleTopDiv = () => {
   const [fontSize, setFontSize] = useState(16);
@@ -37,7 +38,7 @@ const MiddleTopDiv = () => {
   useEffect(() => {
     const fetchContestData = async () => {
       try {
-        const response = await fetch(`https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/contests/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/v1/contests/${id}`, {
           headers: {
             'ngrok-skip-browser-warning': 'true'
           }
@@ -61,7 +62,7 @@ const MiddleTopDiv = () => {
   }, [id, setTestCases]);
   
   const handleSubmit = async () => {
-    const response = await fetch('https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/gemini/evaluate', {
+    const response = await fetch(`${BASE_URL}/api/v1/gemini/evaluate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

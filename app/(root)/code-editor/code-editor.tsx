@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 import RightDiv from '@/components/shared/RightDiv'
 import { useParams } from 'next/navigation'
 import useTestCasesStore from '@/store/testCasesStore';
+import { BASE_URL } from '@/lib/url';
 
 const CodeEditor = () => {
   const { id } = useParams();
@@ -18,7 +19,7 @@ const CodeEditor = () => {
   useEffect(() => {
     const fetchContestData = async () => {
       try {
-        const response = await fetch(`https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/contests/${id}`, {
+        const response = await fetch(`${BASE_URL}/api/v1/contests/${id}`, {
           headers: {
             'ngrok-skip-browser-warning': 'true', // 👈 This is the key addition
           },

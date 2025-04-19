@@ -32,6 +32,7 @@ import {
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
+import { BASE_URL } from '@/lib/url';
 
 const Constest = () => {
   const [numExamples, setNumExamples] = React.useState(1);
@@ -56,7 +57,7 @@ const Constest = () => {
   useEffect(() => {
     const fetchContests = async () => {
       try {
-        const response = await fetch('https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/contests', {
+        const response = await fetch(`${BASE_URL}/api/v1/contests`, {
           headers: {
             'ngrok-skip-browser-warning': 'true'
           }});
@@ -78,7 +79,7 @@ const Constest = () => {
   const handleCreateContest = async () => {
     try {
       console.log("Sending:", JSON.stringify(formData, null, 2));
-      const response = await fetch('https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/contests', {
+      const response = await fetch(`${BASE_URL}/api/v1/contests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json',
           'ngrok-skip-browser-warning': 'true' // Add this line

@@ -6,6 +6,7 @@ import ChatCardUser from './chatcarduser'
 import { Button } from '../ui/button'
 import useTestCasesStore from '@/store/testCasesStore'
 import useCodeEditorStore from '@/store/codeEditorStore'
+import { BASE_URL } from '@/lib/url'
 
 interface ChatMessage {
   id: string;
@@ -52,7 +53,7 @@ const RightDiv = () => {
             setChatArray(prev => [...prev, userMessage]);
             setUserText('');
             
-            const response = await fetch('https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/gemini/chat', {
+            const response = await fetch(`${BASE_URL}/api/v1/gemini/chat`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',

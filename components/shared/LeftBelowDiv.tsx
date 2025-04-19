@@ -23,6 +23,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
+import { BASE_URL } from '@/lib/url'
 
 const LeftBelowDiv = () => {
     const [recommendations, setRecommendations] = useState([]);
@@ -42,7 +43,7 @@ const LeftBelowDiv = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('https://5a38-2405-201-1018-4093-b565-43f9-9ed7-9f6a.ngrok-free.app/api/v1/gemini/recommend', {
+            const response = await fetch(`${BASE_URL}/api/v1/gemini/recommend`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', 
