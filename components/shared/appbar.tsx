@@ -14,7 +14,6 @@ const AppBAr = () => {
         <Link href={'/progress'} className='text-white'>Progress</Link>
       </div>
       <div className='flex items-center space-x-6'>
-        <button className='text-white bg-purple-500 px-2 py-1 rounded-lg'>Premium</button>
         <button className='text-white bg-purple-500 p-2 rounded-full'>DB</button>
       </div>
     </div>
