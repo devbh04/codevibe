@@ -198,9 +198,11 @@ const handleSubmit = async (e) => {
       </div>
       
       {isLoading && !posts.length ? (
-        <div className="text-center py-8">Loading posts...</div>
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+        </div>
       ) : error ? (
-        <div className="text-center py-8 text-red-500">Error: {error}</div>
+        <div className="text-center py-8 text-red-500">Error: {error} [The backend is hosted on render.com it migh take some white to load the content. approx 50 seconds]</div>
       ) : (
         <div className='mx-[450px]'>
           {posts.map((post) => (
