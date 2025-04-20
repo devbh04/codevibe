@@ -5,6 +5,7 @@ import useUserStore from '@/store/userStore'
 import { BASE_URL } from '@/lib/url'
 import ContestCard from '@/components/shared/contestcard'
 import DiscussionCard from '@/components/shared/discussion-card'
+import { Loader2 } from 'lucide-react'
 
 const DashboardPage = () => {
   const { user } = useUserStore()
@@ -14,6 +15,7 @@ const DashboardPage = () => {
   const [cExpand, setCExpand] =useState(false)
   const toggleContests = () => setCExpand(!cExpand)
   const toggleDiscussions = () => setDExpand(!dExpand)
+  const [deletingComments, setDeletingComments] = useState<Record<string, boolean>>({});
   const [activity, setActivity] = useState({
     contests: [],
     discussions: [],
@@ -52,6 +54,66 @@ const DashboardPage = () => {
 
     fetchUserActivity()
   }, [user?._id])
+
+  // Add these functions to your DashboardPage component
+  const handleDeleteDiscussion = async (postId: string) => {
+    try {
+      const response = await fetch(`${BASE_URL}/api/v1/discussion/${postId}`, {
+        method: 'DELETE',
+        headers: {
+          'ngrok-skip-browser-warning': 'true'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete discussion');
+      }
+
+      // Update local state
+      setActivity(prev => ({
+        ...prev,
+        discussions: prev.discussions.filter(d => d.postId !== postId)
+      }));
+    } catch (err) {
+      console.error('Error deleting discussion:', err);
+      setError(err.message);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      // Set loading state
+      setDeletingComments(prev => ({ ...prev, [commentId]: true }));
+      setError(null);
+  
+      const response = await fetch(`${BASE_URL}/api/v1/discussion/comments/${commentId}`, {
+        method: 'DELETE',
+        headers: {
+          'ngrok-skip-browser-warning': 'true',
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to delete comment');
+      }
+  
+      // Update local state
+      setActivity(prev => ({
+        ...prev,
+        comments: prev.comments.filter(c => c._id !== commentId)
+      }));
+  
+    } catch (err) {
+      console.error('Delete comment error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to delete comment');
+    } finally {
+      // Clear loading state
+      setDeletingComments(prev => ({ ...prev, [commentId]: false }));
+    }
+  };
 
   if (!user) {
     return (
@@ -93,7 +155,7 @@ const DashboardPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
+    <div className="min-h-screen text-white p-6">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold mb-8" onClick={()=>console.log(activity)}>Your Activity Dashboard</h1>
         
@@ -131,6 +193,7 @@ const DashboardPage = () => {
                   shortdescription={contest.shortDescription || 'No description available'}
                   datecreated={new Date(contest.submittedAt).toLocaleDateString()}
                   difficulty={contest.difficulty || 'Medium'}
+                  successful={contest.successful} // Add this line
                 />
               ))}
               {activity.contests.length > 3 && (
@@ -148,7 +211,7 @@ const DashboardPage = () => {
               <p>You haven't attempted any contests yet.</p>
               <Button 
                 className="mt-4 bg-purple-600 hover:bg-purple-500"
-                onClick={() => window.location.href = '/contests'}
+                onClick={() => window.location.href = '/contest'}
               >
                 Browse Contests
               </Button>
@@ -162,14 +225,19 @@ const DashboardPage = () => {
           {activity.discussions.length > 0 ? (
             <div className="space-y-6">
               {activity.discussions.slice(0, dExpand ? activity.discussions.length : 3).map((discussion) => (
-                <DiscussionCard
-                  key={discussion.postId}
-                  _id={discussion.postId}
-                  name={user.name}
-                  title={discussion.title}
-                  desc={discussion.description}
-                  date={discussion.createdAt}
-                />
+                <div key={discussion.postId} className="relative">
+                  <DiscussionCard
+                    _id={discussion.postId}
+                    name={user.name}
+                    title={discussion.title}
+                    desc={discussion.description}
+                    date={discussion.createdAt}
+                  />
+                  <svg onClick={() => handleDeleteDiscussion(discussion.postId)}
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-6 w-6 text-red-500 absolute top-3 right-2 cursor-pointer">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                  </svg>
+                </div>
               ))}
               {activity.discussions.length > 3 && (
                 <Button 
@@ -186,7 +254,7 @@ const DashboardPage = () => {
               <p>You haven't started any discussions yet.</p>
               <Button 
                 className="mt-4 bg-purple-600 hover:bg-purple-500"
-                onClick={() => window.location.href = '/discussion/create'}
+                onClick={() => window.location.href = '/discussion'}
               >
                 Start a Discussion
               </Button>
@@ -200,7 +268,7 @@ const DashboardPage = () => {
           {activity.comments.length > 0 ? (
             <div className="space-y-4">
               {activity.comments.map((comment) => (
-                <div key={comment._id} className="bg-slate-800 p-4 rounded-lg">
+                <div key={comment._id} className="bg-slate-800 p-4 rounded-lg relative">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-semibold">{comment.text}</p>
@@ -208,12 +276,16 @@ const DashboardPage = () => {
                         On: {comment.postTitle || 'Discussion Post'}
                       </p>
                     </div>
-                    <p className="text-sm text-gray-400">
+                    <p className="text-sm text-gray-400 pr-6">
                       {new Date(comment.createdAt).toLocaleString()}
                     </p>
-                  </div>
+                    </div>
+                    <svg onClick={() => handleDeleteComment(comment._id)}
+                      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-6 w-6 text-red-500 absolute top-3 right-2 cursor-pointer">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                  </svg>
                 </div>
-              ))}
+                ))}
             </div>
           ) : (
             <div className="bg-slate-800 rounded-lg p-6 text-center">

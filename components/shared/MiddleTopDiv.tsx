@@ -20,11 +20,12 @@ import {
 import useCodeEditorStore from '@/store/codeEditorStore';
 import useTestCasesStore from '@/store/testCasesStore';
 import { Input } from '../ui/input';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import confetti from 'canvas-confetti';
 import { BASE_URL } from '@/lib/url';
 
 const MiddleTopDiv = () => {
+  const router = useRouter();
   const [fontSize, setFontSize] = useState(16);
   const [editorValue, setEditorValue] = useState('// Initial code');
   const [key, setKey] = useState('');
@@ -126,6 +127,9 @@ const handleKeySubmit = async () => {
         origin: { y: 0.6 },
         colors: ['#4ade80', '#60a5fa', '#fbbf24']
       });
+      setTimeout(() => {
+        router.push('/profile')
+      }, 300);
     } else {
       setIsWrongKey(true);
       setTimeout(() => setIsWrongKey(false), 500);

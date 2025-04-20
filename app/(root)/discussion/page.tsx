@@ -107,8 +107,6 @@ const handleSubmit = async (e) => {
     });
     setOpen(false);
     
-    // Show success message
-    alert('Post created successfully!');
   } catch (error) {
     console.error('Error creating post:', error);
     setError(error.message);

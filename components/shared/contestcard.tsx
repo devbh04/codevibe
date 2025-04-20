@@ -4,18 +4,24 @@ import { Button } from '../ui/button'
 import { useRouter } from 'next/navigation'
 import useUserStore from '@/store/userStore'
 
-const ContestCard = ({ id, title, company, reward, shortdescription, datecreated, difficulty }) => {
+const ContestCard = ({ id, title, company, reward, shortdescription, datecreated, difficulty, successful }) => {
   const router = useRouter();
-  
   const { user } = useUserStore();
   
   const handleSolveClick = () => {
     router.push(`/code-editor/${id}`);
   };
 
+  // Determine background color class based on successful status
+  const cardBgColor = successful === 'true' 
+    ? 'bg-green-950' 
+    : successful === 'false' 
+      ? 'bg-red-950' 
+      : 'bg-slate-800';
+
   return (
-    <div className='bg-slate-800 p-4 rounded-lg shadow-md space-x-4 mb-4'>
-      <div className="p-4 w-full flex justify-between items-center">
+    <div className={`p-4 rounded-lg shadow-md mb-4 ${cardBgColor}`}>
+      <div className="w-full flex justify-between items-center">
         <p className='text-xl'>{title}</p>
         <div className='flex gap-2 items-center'>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-5 w-5 ml-2 text-amber-400">
@@ -25,7 +31,7 @@ const ContestCard = ({ id, title, company, reward, shortdescription, datecreated
         </div>
       </div>
 
-      <div className='flex gap-2 px-4 items-center'>
+      <div className='flex gap-2 px-4 items-center mt-2'>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-5 w-5 ml-2 text-blue-600">
           <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" />
         </svg>
@@ -36,7 +42,7 @@ const ContestCard = ({ id, title, company, reward, shortdescription, datecreated
         <p>{shortdescription}</p>
       </div>
 
-      <div className='flex justify-between px-4 items-center pb-2'>
+      <div className='flex justify-between px-4 items-center pb-2 mt-2'>
         <div className='flex gap-4 items-center'>
           <div className='flex gap-2'>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-6 w-6">
@@ -55,7 +61,7 @@ const ContestCard = ({ id, title, company, reward, shortdescription, datecreated
           </p>
         </div>
         <Button
-          className='bg-purple-600 hover:bg-purple-400'
+          className='bg-purple-600 hover:bg-purple-500'
           onClick={handleSolveClick}
           disabled={!user}
         >
