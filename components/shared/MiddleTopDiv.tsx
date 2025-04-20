@@ -84,25 +84,58 @@ const MiddleTopDiv = () => {
     setNewTestCases(evaluationResults);
     console.log('Test Cases:', testCases);
   }
+  
+  // components/MiddleTopDiv.tsx
+const handleKeySubmit = async () => {
+  const success = key === adminKey ? 'yes' : 'no';
+  
+  try {
+    const storedUser = localStorage.getItem('codevibe-user');
+    if (!storedUser) {
+      throw new Error('User not authenticated');
+    }
+    
+    const user = JSON.parse(storedUser);
 
-  const handleKeySubmit = () => {
-    if (key === adminKey) {
-      // Success - trigger confetti
+    const response = await fetch(`${BASE_URL}/api/v1/contests/submit`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'ngrok-skip-browser-warning': 'true'
+      },
+      body: JSON.stringify({
+        contestId: id,
+        code: userCode,
+        language: useLanguage,
+        successful: success,
+        userId: user._id
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Submission failed');
+    }
+
+    if (success === 'yes') {
       confetti({
         particleCount: 200,
         spread: 100,
         origin: { y: 0.6 },
         colors: ['#4ade80', '#60a5fa', '#fbbf24']
       });
-      console.log('Correct key submitted!');
-      // Add your actual submission logic here
     } else {
-      // Failure - trigger shake animation
       setIsWrongKey(true);
       setTimeout(() => setIsWrongKey(false), 500);
-      console.log('Incorrect key');
     }
-  };
+  } catch (error) {
+    console.error('Submission error:', error);
+    setIsWrongKey(true);
+    setTimeout(() => setIsWrongKey(false), 500);
+  }
+};
 
   return (
     <div className="w-full h-5/6 flex flex-col">

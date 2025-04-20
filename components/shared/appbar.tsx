@@ -27,7 +27,7 @@ const AppBAr = () => {
       {user ?
             <div className='flex items-center space-x-6'>
               <button onClick={logout} className='text-white bg-purple-500 p-2 rounded-lg'>Logout</button>
-              <p className='text-white p-2 rounded-full'>Hello!! {user.name}</p>
+              <Link href={"/profile"} className='text-white p-2 rounded-full'>Hello!! {user.name}</Link>
             </div>
             :
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-10 w-10">

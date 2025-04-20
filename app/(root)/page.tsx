@@ -190,19 +190,28 @@ export default Home;
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setUser } = useUserStore();
+  const { setAuth } = useUserStore(); // Using setAuth instead of setUser
 
   const handleLogin = async () => {
-    const res = await fetch(`${BASE_URL}/api/v1/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setUser(data.user);
-    } else {
-      alert(data.error);
+    try {
+      const res = await fetch(`${BASE_URL}/api/v1/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      // Store both user data and token
+      setAuth(data.user, data.token);
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      alert(error.message);
     }
   };
 
@@ -244,19 +253,28 @@ function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setUser } = useUserStore();
+  const { setAuth } = useUserStore(); // Using setAuth instead of setUser
 
   const handleRegister = async () => {
-    const res = await fetch(`${BASE_URL}/api/v1/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setUser(data.user);
-    } else {
-      alert(data.error);
+    try {
+      const res = await fetch(`${BASE_URL}/api/v1/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Registration failed');
+      }
+
+      // Store both user data and token
+      setAuth(data.user, data.token);
+      
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert(error.message);
     }
   };
 

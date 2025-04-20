@@ -284,7 +284,7 @@ const Constest = () => {
               </DialogContent>
             </Dialog>
         </div>
-        <div>
+        <div className='mx-[450px]'>
           {contests.map((contest) => (
             <ContestCard 
               key={contest._id}

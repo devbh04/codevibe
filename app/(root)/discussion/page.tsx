@@ -63,50 +63,59 @@ const Discussion = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!user) {
-      setError('You must be logged in to create a post');
-      return;
+// components/Discussion.tsx
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (!user) {
+    setError('You must be logged in to create a post');
+    return;
+  }
+
+  setIsLoading(true);
+  setError(null);
+  
+  try {
+    const postData = {
+      name: user.name,
+      title: formData.title,
+      description: formData.description,
+      userId: user._id
+    };
+
+    const response = await fetch(`${BASE_URL}/api/v1/discussion`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'ngrok-skip-browser-warning': 'true'
+      },
+      body: JSON.stringify(postData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to create post');
     }
 
-    setIsLoading(true);
-    setError(null);
+    // Update local state
+    setPosts(prev => [data, ...prev]);
+    setFormData({
+      title: '',
+      description: ''
+    });
+    setOpen(false);
     
-    try {
-      const postData = {
-        ...formData,
-        name: user.name // Automatically use the authenticated user's name
-      };
-
-      const response = await fetch(`${BASE_URL}/api/v1/discussion`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
-        },
-        body: JSON.stringify(postData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create post');
-      }
-
-      const newPost = await response.json();
-      setPosts(prev => [newPost, ...prev]);
-      setFormData({
-        title: '',
-        description: ''
-      });
-      setOpen(false);
-    } catch (error) {
-      console.error('Error creating post:', error);
-      setError(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    // Show success message
+    alert('Post created successfully!');
+  } catch (error) {
+    console.error('Error creating post:', error);
+    setError(error.message);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div>
@@ -193,7 +202,7 @@ const Discussion = () => {
       ) : error ? (
         <div className="text-center py-8 text-red-500">Error: {error}</div>
       ) : (
-        <div>
+        <div className='mx-[450px]'>
           {posts.map((post) => (
             <DiscussionCard 
               key={post._id}

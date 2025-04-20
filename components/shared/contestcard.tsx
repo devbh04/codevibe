@@ -14,7 +14,7 @@ const ContestCard = ({ id, title, company, reward, shortdescription, datecreated
   };
 
   return (
-    <div className='bg-slate-800 p-4 rounded-lg shadow-md space-x-4 mb-4 mx-[450px]'>
+    <div className='bg-slate-800 p-4 rounded-lg shadow-md space-x-4 mb-4'>
       <div className="p-4 w-full flex justify-between items-center">
         <p className='text-xl'>{title}</p>
         <div className='flex gap-2 items-center'>

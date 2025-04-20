@@ -54,6 +54,7 @@ const DiscussionCard = ({ _id, name, title, desc, date }: {
     }
   };
 
+// components/DiscussionCard.tsx
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -73,12 +74,15 @@ const DiscussionCard = ({ _id, name, title, desc, date }: {
       const response = await fetch(`${BASE_URL}/api/v1/discussion/${_id}/comments`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'ngrok-skip-browser-warning': 'true'
         },
         body: JSON.stringify({ 
-          name: user.name, // Use authenticated user's name
-          text: newComment 
+          name: user.name,
+          text: newComment,
+          postTitle : title,
+          userId: user._id // Include user ID
         }),
       });
 
@@ -105,7 +109,7 @@ const DiscussionCard = ({ _id, name, title, desc, date }: {
   };
 
   return (
-    <div className='mx-[450px] bg-slate-800 p-4 rounded-lg shadow-md flex space-x-4 mb-4'>
+    <div className='bg-slate-800 p-4 rounded-lg shadow-md flex space-x-4 mb-4'>
       <div>
         <p className='bg-purple-500 p-4 rounded-full'>
           {name[0].toUpperCase() + (name[1] ? name[1].toUpperCase() : '')}
