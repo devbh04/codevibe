@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { BASE_URL } from "@/lib/url";
 import useUserStore from "@/store/userStore";
+import { ThreeDMarquee } from "@/components/ui/3d-marquee";
 
 const Home = () => {
   const { user, initialize } = useUserStore();
@@ -28,12 +29,44 @@ const Home = () => {
     initialize();
   }, [initialize]);
 
+  const images = [
+    "1.png",
+    "2.png",
+    "3.png",
+    "4.png",
+    "5.png",
+    "6.png",
+    "7.png",
+    "8.png",
+    "9.png",
+    "10.png",
+    "11.png",
+    "9.png",
+    "12.png",
+    "9.png",
+    "2.png",
+    "3.png",
+    "4.png",
+    "5.png",
+    "6.png",
+    "7.png",
+    "1.png",
+    "8.png",
+    "6.png",
+    "7.png",
+    "8.png",
+    "9.png",
+    "10.png",
+    "11.png",
+    "12.png",
+  ];
+
   return (
     <>
     <div className="flex flex-col items-center text-white">
       {/* Hero Section */}
-      <div className="w-full max-w-6xl p-4 rounded-xl bg-black mt-10">
-        <BackgroundLines className="flex items-center bg-black justify-center w-full flex-col px-4 mb-10 mt-10 py-10">
+      <div className="w-full max-w-6xl p-4 rounded-xl bg-black">
+        <BackgroundLines className="flex items-center bg-black justify-center w-full flex-col px-4 mb-10 py-10">
           <h2 className="bg-clip-text text-transparent text-center bg-gradient-to-b from-neutral-300 to-neutral-700 dark:from-neutral-600 dark:to-white text-2xl md:text-4xl lg:text-7xl font-sans py-2 md:py-10 relative z-20 font-bold tracking-tight">
             CodeVibe <br /> AI-Powered Coding
           </h2>
@@ -57,7 +90,10 @@ const Home = () => {
 
 
       {/* Other sections */}
-      <div className="w-full max-w-6xl space-y-20 my-10">
+      <div className="w-full max-w-6xl space-y-20 mb-10">
+        <div className="mx-auto mb-20 max-w-7xl rounded-3xl bg-gray-950/5 p-2 ring-1 ring-neutral-700/10 dark:bg-neutral-800">
+          <ThreeDMarquee images={images} />
+        </div>
         {/* Boxes Section with Image */}
         <div className="relative w-[full] overflow-hidden bg-slate-black flex flex-col items-center justify-center rounded-lg h-[650px]">
           {/* Background Boxes */}
@@ -70,11 +106,18 @@ const Home = () => {
           
           {/* Image Container */}
           <div className="relative z-30 w-full max-w-5xl h-full flex items-center justify-center p-4">
-            <img
-              src="codeeditorpage.png"
-              alt="Code Editor Example"
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="none"
               className="h-full w-full object-contain"
-            />
+            >
+              <source src="codeeditor.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+
           </div>
         </div>
 
