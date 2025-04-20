@@ -14,19 +14,20 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"  
 import { Textarea } from '@/components/ui/textarea'
 import { BASE_URL } from '@/lib/url'
+import useUserStore from '@/store/userStore'
 
 const API_BASE_URL = 'http://localhost:5001';
 
 const Discussion = () => {
   const [posts, setPosts] = useState([]);
   const [formData, setFormData] = useState({
-    name: '',
     title: '',
     description: ''
   });
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { user } = useUserStore();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -64,17 +65,28 @@ const Discussion = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!user) {
+      setError('You must be logged in to create a post');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     
     try {
+      const postData = {
+        ...formData,
+        name: user.name // Automatically use the authenticated user's name
+      };
+
       const response = await fetch(`${BASE_URL}/api/v1/discussion`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'ngrok-skip-browser-warning': 'true'
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(postData),
       });
 
       if (!response.ok) {
@@ -84,7 +96,6 @@ const Discussion = () => {
       const newPost = await response.json();
       setPosts(prev => [newPost, ...prev]);
       setFormData({
-        name: '',
         title: '',
         description: ''
       });
@@ -103,7 +114,11 @@ const Discussion = () => {
         <p className='text-3xl'>Discussion</p>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" className='bg-purple-500 hover:bg-purple-400'>
+            <Button 
+              variant="outline" 
+              className='bg-purple-500 hover:bg-purple-400'
+              disabled={!user}
+            >
               New Post
             </Button>
           </DialogTrigger>
@@ -123,15 +138,13 @@ const Discussion = () => {
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="name" className="text-right">
-                    Name
+                    Author
                   </Label>
                   <Input 
                     id="name" 
                     className="col-span-3" 
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isLoading}
+                    value={user?.name || ''}
+                    disabled
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
@@ -165,7 +178,7 @@ const Discussion = () => {
                 <Button 
                   type="submit" 
                   className='bg-purple-500 hover:bg-purple-400 cursor-pointer'
-                  disabled={isLoading}
+                  disabled={isLoading || !user}
                 >
                   {isLoading ? 'Posting...' : 'Add it!!'}
                 </Button>

@@ -2,10 +2,13 @@
 import React from 'react'
 import { Button } from '../ui/button'
 import { useRouter } from 'next/navigation'
+import useUserStore from '@/store/userStore'
 
 const ContestCard = ({ id, title, company, reward, shortdescription, datecreated, difficulty }) => {
   const router = useRouter();
-
+  
+  const { user } = useUserStore();
+  
   const handleSolveClick = () => {
     router.push(`/code-editor/${id}`);
   };
@@ -54,6 +57,7 @@ const ContestCard = ({ id, title, company, reward, shortdescription, datecreated
         <Button
           className='bg-purple-600 hover:bg-purple-400'
           onClick={handleSolveClick}
+          disabled={!user}
         >
           Solve
         </Button>

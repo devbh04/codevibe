@@ -33,6 +33,7 @@ import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { Calendar } from "@/components/ui/calendar"
 import { BASE_URL } from '@/lib/url';
+import useUserStore from "@/store/userStore"; // Adjust the path as needed
 
 const Constest = () => {
   const [numExamples, setNumExamples] = React.useState(1);
@@ -40,6 +41,8 @@ const Constest = () => {
   const [contests, setContests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const { user } = useUserStore();
 
   const [formData, setFormData] = useState({
     title: '',
@@ -117,10 +120,22 @@ const Constest = () => {
               </DialogTrigger>
               <DialogContent className="overflow-auto sm:max-w-[1000px] sm:max-h-[800px] bg-slate-900 border-slate-800">
                 <DialogHeader>
-                  <DialogTitle>Create a Contest</DialogTitle>
-                  <DialogDescription>
-                    Add the details of the contest you want to create.
-                  </DialogDescription>
+                  <div className='flex justify-between pr-10'>
+                    <div className=''>
+                      <DialogTitle>Create a Contest</DialogTitle>
+                      <DialogDescription>
+                        Add the details of the contest you want to create.
+                      </DialogDescription>
+                    </div>
+                    <Button 
+                      type="submit" 
+                      className='bg-purple-500 hover:bg-purple-400 cursor-pointer'
+                      onClick={handleCreateContest}
+                      disabled={!user}
+                      >
+                      Add it!!
+                    </Button>
+                  </div>
                 </DialogHeader>
                 <div className="grid grid-cols-3 gap-4 py-4">
                   <div className="grid grid-cols-1 items-center gap-4">
@@ -265,15 +280,6 @@ const Constest = () => {
                       ))}
                     </div>
                   </div>
-                </div>
-                <div className="flex justify-end">
-                  <Button 
-                    type="submit" 
-                    className='bg-purple-500 hover:bg-purple-400 cursor-pointer'
-                    onClick={handleCreateContest}
-                  >
-                    Add it!!
-                  </Button>
                 </div>
               </DialogContent>
             </Dialog>

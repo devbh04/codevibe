@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from '@/components/ui/textarea';
 import { BASE_URL } from '@/lib/url';
+import useUserStore from '@/store/userStore';
 
 interface Comment {
   _id: string;
@@ -20,10 +20,11 @@ const DiscussionCard = ({ _id, name, title, desc, date }: {
 }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
-  const [commenterName, setCommenterName] = useState('');
   const [showComments, setShowComments] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const { user } = useUserStore();
 
   const fetchComments = async () => {
     setIsLoading(true);
@@ -47,7 +48,7 @@ const DiscussionCard = ({ _id, name, title, desc, date }: {
     } catch (error) {
       console.error('Error fetching comments:', error);
       setError(error instanceof Error ? error.message : 'Failed to fetch comments');
-      setComments([]); // Ensure comments is always an array
+      setComments([]);
     } finally {
       setIsLoading(false);
     }
@@ -55,8 +56,17 @@ const DiscussionCard = ({ _id, name, title, desc, date }: {
 
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!commenterName || !newComment) return;
     
+    if (!user) {
+      setError('You must be logged in to comment');
+      return;
+    }
+
+    if (!newComment.trim()) {
+      setError('Comment cannot be empty');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     try {
@@ -67,7 +77,7 @@ const DiscussionCard = ({ _id, name, title, desc, date }: {
           'ngrok-skip-browser-warning': 'true'
         },
         body: JSON.stringify({ 
-          name: commenterName, 
+          name: user.name, // Use authenticated user's name
           text: newComment 
         }),
       });
@@ -79,7 +89,6 @@ const DiscussionCard = ({ _id, name, title, desc, date }: {
       const addedComment = await response.json();
       setComments(prev => [addedComment, ...prev]);
       setNewComment('');
-      setCommenterName('');
     } catch (error) {
       console.error('Error adding comment:', error);
       setError(error instanceof Error ? error.message : 'Failed to add comment');
@@ -147,31 +156,32 @@ const DiscussionCard = ({ _id, name, title, desc, date }: {
                 )}
               </div>
 
-              <form onSubmit={handleAddComment} className="space-y-2">
-                <Input
-                  placeholder="Your name"
-                  value={commenterName}
-                  onChange={(e) => setCommenterName(e.target.value)}
-                  required
-                  disabled={isLoading}
-                  className="bg-gray-700 border-gray-600"
-                />
-                <Textarea
-                  placeholder="Write a comment..."
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  required
-                  disabled={isLoading}
-                  className="bg-gray-700 border-gray-600"
-                />
-                <Button
-                  type="submit"
-                  disabled={isLoading || !commenterName || !newComment}
-                  className="bg-purple-600 hover:bg-purple-500"
-                >
-                  {isLoading ? 'Posting...' : 'Add Comment'}
-                </Button>
-              </form>
+              {user ? (
+                <form onSubmit={handleAddComment} className="space-y-2">
+                  <div className="text-sm text-gray-300">
+                    Commenting as: <span className="font-semibold">{user.name}</span>
+                  </div>
+                  <Textarea
+                    placeholder="Write a comment..."
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    required
+                    disabled={isLoading}
+                    className="bg-gray-700 border-gray-600"
+                  />
+                  <Button
+                    type="submit"
+                    disabled={isLoading || !newComment.trim()}
+                    className="bg-purple-600 hover:bg-purple-500"
+                  >
+                    {isLoading ? 'Posting...' : 'Add Comment'}
+                  </Button>
+                </form>
+              ) : (
+                <div className="text-gray-400 text-sm">
+                  Please log in to leave a comment
+                </div>
+              )}
             </div>
           )}
         </div>
