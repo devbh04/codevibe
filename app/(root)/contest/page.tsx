@@ -298,6 +298,7 @@ const Constest = () => {
               shortdescription={contest.shortDescription}
               datecreated={new Date(contest.createdAt).toLocaleDateString()}
               difficulty={contest.difficulty}
+              successful={''}
             />
           ))}
         </div>
